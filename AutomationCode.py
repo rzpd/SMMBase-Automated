@@ -1,5 +1,7 @@
 from playwright.sync_api import sync_playwright, Page, TimeoutError
 import re
+import random
+import string
 
 def open_browser_incognito():
     with sync_playwright() as p:
@@ -27,7 +29,7 @@ def open_browser_incognito():
         # Fill form
         index = 1 # can be looped
         email = f"michael{index}@gmail.com"
-        password = "TestPassword123!"
+        password = generate_password()
 
         # Wait for the Sign Up modal to appear
         page.wait_for_selector('#registerWindow input[placeholder="Email"]')
@@ -63,6 +65,24 @@ def open_browser_incognito():
         place_order_with_retry(order_page, "https://www.instagram.com/itsmichie_", "100")
 
         print("Finished!")
+
+def generate_password():
+    letters = string.ascii_letters 
+    digits = string.digits
+    symbols = string.punctuation
+
+    password = [
+        random.choice(letters),  # pick a random letter
+        random.choice(digits),   # pick a random digit
+        random.choice(symbols)   # pick a random symbol
+    ]
+
+    
+    remaining_chars = random.choices(letters + digits + symbols, k=5)
+    password.extend(remaining_chars)
+
+    random.shuffle(password)
+    return ''.join(password)
 
 def human_type(page: Page, selector: str, text: str, delay: int = 100):
     """
